@@ -1,3 +1,12 @@
+from typing import Dict, List, Set, Tuple
+
+
+TBridge = Tuple[int, int]
+
+
+##############
+# DEPENDENCIES
+##############
 # shamelessly stolen from https://gist.github.com/artkpv/6f0591c01a940d6ebe1344a8efa88847
 # changed a bit for clarity's sake and added some extra documentation to help
 # me understand what the hell is going on in the code for future reference
@@ -25,7 +34,7 @@ class UnionFind:
     self._size = [1] * n
     self.cc = n  # nr. of connected components
 
-  def _root(self, i: int):
+  def root(self, i: int):
     """Returns the ID of the root of the i-th node (w/ path compression)"""
     j = i
     while j != self._parent[j]:
@@ -35,12 +44,12 @@ class UnionFind:
 
   def find(self, p: int, q: int):
     """Returns True iff p-th and q-th node have the same parent"""
-    return self._root(p) == self._root(q)
+    return self.root(p) == self.root(q)
 
   def union(self, p: int, q: int):
     """Connect p-th and q-th nodes' roots together"""
-    i = self._root(p)
-    j = self._root(q)
+    i = self.root(p)
+    j = self.root(q)
     if i == j:
       return
     if self._size[i] < self._size[j]:
@@ -54,3 +63,31 @@ class UnionFind:
   def size(self, p: int):
     """Get the number of p's children + 1"""
     return self._size[p]
+
+
+##############
+# MAIN PROGRAM
+##############
+def main():
+  n = int(input())
+
+  # collect all bridges & count nr. of distinct buildings
+  buildings: Dict[str, int] = {}
+  bridges: List[TBridge] = [None] * n
+  for i in range(n):
+    b1, b2 = input().split()
+    if b1 not in buildings:
+      buildings[b1] = len(buildings)
+    if b2 not in buildings:
+      buildings[b2] = len(buildings)
+    bridges[i] = (buildings[b1], buildings[b2])
+  
+  # go through each bridge
+  uf = UnionFind(len(buildings))
+  for bridge in bridges:
+    b1, b2 = bridge
+    uf.union(b1, b2)
+    print(uf.size(uf.root(b1)))
+
+if __name__ == "__main__":
+  main()
