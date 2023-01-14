@@ -34,7 +34,7 @@ class UnionFind:
     return j
 
   def find(self, p: int, q: int):
-    """Returns True iff p-th and q-th node have the same parent"""
+    """Returns True iff p-th and q-th node have the same root"""
     return self._root(p) == self._root(q)
 
   def union(self, p: int, q: int):
